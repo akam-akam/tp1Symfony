@@ -3,7 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Livre;
-use App\Form\LivreType;
+use App\Form\Livre1Type;
 use App\Repository\LivreRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -13,15 +13,11 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('/livre')]
 class LivreController extends AbstractController
 {
-    #[Route('/p{page}/{nb}', name: 'app_livre_index', methods: ['GET'])]
-    public function index($nb = 15,$page = 1,LivreRepository $livreRepository): Response
+    #[Route('/', name: 'app_livre_index', methods: ['GET'])]
+    public function index(LivreRepository $livreRepository): Response
     {
-        $nbE = $livreRepository->count([]);
-        $total = range(1, $nbE/$nb);
         return $this->render('livre/index.html.twig', [
-            'livres' => $livreRepository->findBy([],[],$nb,($page-1)*$nb),
-            'total' => $total,
-            'nbParPage' => $nb
+            'livres' => $livreRepository->findAll(),
         ]);
     }
 
@@ -29,7 +25,7 @@ class LivreController extends AbstractController
     public function new(Request $request, LivreRepository $livreRepository): Response
     {
         $livre = new Livre();
-        $form = $this->createForm(LivreType::class, $livre);
+        $form = $this->createForm(Livre1Type::class, $livre);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -55,7 +51,7 @@ class LivreController extends AbstractController
     #[Route('/{id}/edit', name: 'app_livre_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Livre $livre, LivreRepository $livreRepository): Response
     {
-        $form = $this->createForm(LivreType::class, $livre);
+        $form = $this->createForm(Livre1Type::class, $livre);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
